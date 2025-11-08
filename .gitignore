@@ -1,0 +1,136 @@
+# Root .gitignore for CampusLink
+
+### General
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+/.pnp/
+.pnp.js
+
+# dotenv environment variables
+.env
+.env.*
+
+### Node / Next.js
+.next/
+out/
+dist/
+build/
+public/build/
+.vercel/
+
+### Flutter / Dart
+# Flutter/Dart specific
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/
+# pubspec.lock  # Consider tracking this for apps (recommended). Uncomment to ignore if you prefer not to track it.
+
+# Generated iOS/Android files
+*/ios/Flutter/Flutter.framework
+*/ios/Flutter/Flutter.podspec
+
+# Xcode
+/ios/Pods/
+/ios/Runner.xcworkspace/
+/ios/xcuserdata/
+/ios/*.xcuserstate
+/ios/Flutter/Generated.xcconfig
+
+# Android
+/android/.gradle/
+/android/app/build/
+/android/build/
+android/local.properties
+gradle-wrapper.jar
+
+# Kotlin/Gradle caches
+.gradle/
+build/
+
+### IDEs and editors
+.idea/
+*.iml
+*.iws
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# JetBrains
+*.ipr
+*.iws
+out/
+
+### Flutter/Dart IDE files
+*.flutter-plugins
+*.packages
+
+### VS Code workspace settings (optionally track specific files)
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+### Android Studio
+.gradle/
+local.properties
+/.idea/
+*.iml
+
+### macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Windows
+Thumbs.db
+ehthumbs.db
+
+### Linux
+*~
+
+### Generated documentation
+docs/api/
+
+### Misc
+coverage/
+.nyc_output/
+coverage-final.json
+
+### Web-specific
+web/.next/
+web/node_modules/
+web/.vercel/
+
+### Prevent committing large files accidentally
+*.tar.gz
+*.zip
+*.tgz
+*.bak
+
+### Editor swap files
+*~
+.#*
