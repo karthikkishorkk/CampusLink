@@ -16,7 +16,7 @@ class OpeningScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 24),
               const Text(
-                'Classroom',
+                'CampusLink',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 48,

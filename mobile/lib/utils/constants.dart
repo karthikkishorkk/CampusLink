@@ -1,3 +1,3 @@
 class AppConstants {
-  static const appName = 'Classroom';
+  static const appName = 'CampusLink';
 }
