@@ -40,6 +40,13 @@ export default function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
 
       {/* Right Section */}
       <div className="flex items-center gap-3">
+        <p className="text-sm text-[#8B1538]/70">
+          {new Date().toLocaleString('en-IN', {
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </p>
         {/* Dark Mode Toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}
@@ -47,16 +54,6 @@ export default function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
           title="Toggle dark mode"
         >
           {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </button>
-
-        {/* Notifications */}
-        <button className="relative p-2 hover:bg-[#F5E6D3]/50 rounded-lg transition-colors text-[#8B1538]" title="Notifications">
-          <Bell className="w-5 h-5" />
-          {notifications > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 bg-[#8B1538] text-white text-xs rounded-full flex items-center justify-center font-bold">
-              {notifications}
-            </span>
-          )}
         </button>
 
         {/* Logout */}
