@@ -1,51 +1,64 @@
 import 'package:flutter/foundation.dart';
+// import '../services/supabase_service.dart'; // Commented out - will implement later
 
 class ClassroomProvider with ChangeNotifier {
-  // Classroom availability: Map<"S001_2024-11-12_9:00-9:50", bool>
-  final Map<String, bool> _bookings = {};
+  List<Map<String, dynamic>> _classrooms = [];
+  bool _isLoading = false;
+  String? _error;
 
-  // Get availability for specific date and time
-  List<String> getAvailableClassrooms(String date, String timeSlot) {
-    final allClassrooms = [
-      'S001', 'S002', 'S003', 'S004', 'S005', 'S006',
-      'S007', 'S008', 'S009', 'S010', 'S011', 'S012',
-      'N001', 'N002', 'N003', 'N004', 'N005', 'N006',
-      'N007', 'N008', 'N009', 'N010', 'N011', 'N012',
-    ];
+  List<Map<String, dynamic>> get classrooms => _classrooms;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
-    return allClassrooms.where((classroom) {
-      final key = '${classroom}_${date}_$timeSlot';
-      return !(_bookings[key] ?? false); // Not booked = available
-    }).toList();
-  }
-
-  // Book a classroom
-  bool bookClassroom({
-    required String classroom,
-    required String date,
-    required String timeSlot,
-    required String teacherName,
-  }) {
-    final key = '${classroom}_${date}_$timeSlot';
-    
-    if (_bookings[key] == true) {
-      return false; // Already booked
-    }
-    
-    _bookings[key] = true;
+  // Get available classrooms for specific date and time from Supabase
+  Future<void> getAvailableClassrooms(DateTime date, String timeSlot) async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
-    return true;
+
+    try {
+      // TODO: Implement when classroom booking is needed
+      // _classrooms = await SupabaseService.getClassrooms(
+      //   date: date,
+      //   timeSlot: timeSlot,
+      // );
+      _classrooms = []; // Return empty for now
+    } catch (e) {
+      _error = e.toString();
+      _classrooms = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  // Check if classroom is booked
-  bool isBooked(String classroom, String date, String timeSlot) {
-    final key = '${classroom}_${date}_$timeSlot';
-    return _bookings[key] ?? false;
-  }
+  // Book a classroom with Supabase
+  Future<bool> bookClassroom({
+    required String classroomId,
+    required DateTime date,
+    required String timeSlot,
+    required String userId,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
-  // Get teacher's bookings
-  List<Map<String, dynamic>> getTeacherBookings() {
-    // In real app, filter by teacher ID
-    return [];
+    try {
+      // TODO: Implement when classroom booking is needed
+      // await SupabaseService.bookClassroom(
+      //   classroomId: classroomId,
+      //   date: date,
+      //   timeSlot: timeSlot,
+      //   userId: userId,
+      // );
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 }
