@@ -49,7 +49,7 @@ export default function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded-md px-3 py-2"
+            className="w-full border rounded-md px-3 py-2 text-[#2C1810] font-medium placeholder:text-[#bfaea6] bg-white focus:outline-none focus:ring-2 focus:ring-[#8B1538]/30 focus:border-[#8B1538]"
             required
           />
           <input
@@ -57,14 +57,14 @@ export default function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded-md px-3 py-2"
+            className="w-full border rounded-md px-3 py-2 text-[#2C1810] font-medium placeholder:text-[#bfaea6] bg-white focus:outline-none focus:ring-2 focus:ring-[#8B1538]/30 focus:border-[#8B1538]"
             required
           />
           {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#7c183d] text-white py-2 rounded-md hover:bg-[#61122e]"
+            className="w-full bg-[#7c183d] text-white py-2 rounded-md hover:bg-[#61122e] font-medium"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

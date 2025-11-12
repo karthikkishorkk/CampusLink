@@ -11,7 +11,6 @@ import {
   Calendar,
   Users,
   User,
-  Settings,
   ChevronDown,
   X,
 } from "lucide-react";
@@ -37,7 +36,6 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
     { name: "Bookings", href: "/admin/bookings", icon: Calendar },
     { name: "Users", href: "/admin/users", icon: Users },
     { name: "Profile", href: "/admin/profile", icon: User },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (
