@@ -131,27 +131,27 @@ export default function UsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow p-4">
-        <table className="w-full border-collapse">
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <table className="w-full">
           <thead>
-            <tr className="bg-gray-100 text-left">
+            <tr className="bg-[#F5E6D3]/70 border-b border-[#8B1538]/20">
               {filter === "Students" ? (
                 <>
-                  <th className="border p-2">Roll No</th>
-                  <th className="border p-2">Name</th>
-                  <th className="border p-2">Branch</th>
-                  <th className="border p-2">Email</th>
-                  <th className="border p-2 text-center">Status</th>
-                  <th className="border p-2 text-center">Actions</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Roll No</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Name</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Branch</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Email</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Status</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Actions</th>
                 </>
               ) : (
                 <>
-                  <th className="border p-2">Teacher ID</th>
-                  <th className="border p-2">Name</th>
-                  <th className="border p-2">Branch</th>
-                  <th className="border p-2">Email</th>
-                  <th className="border p-2 text-center">Status</th>
-                  <th className="border p-2 text-center">Actions</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Teacher ID</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Name</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Branch</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Email</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Status</th>
+                  <th className="text-left py-3 px-4 text-[#8B1538] font-semibold">Actions</th>
                 </>
               )}
             </tr>
@@ -160,22 +160,26 @@ export default function UsersPage() {
           <tbody>
             {filter === "Students" &&
               students.map((s) => (
-                <tr key={s.id} className="border-t hover:bg-gray-50">
-                  <td className="p-2 text-[#2C1810]">{s.rollno}</td>
-                  <td className="p-2 text-[#2C1810]">{s.name}</td>
-                  <td className="p-2 text-[#2C1810]">{s.branch}</td>
-                  <td className="p-2 text-[#2C1810]">{s.email}</td>
-                  <td
-                    className={`p-2 text-center font-medium ${
-                      s.status === "Active" ? "text-green-600" : "text-red-500"
-                    }`}
-                  >
-                    {s.status}
+                <tr key={s.id} className="border-b border-[#8B1538]/10 hover:bg-[#F5E6D3]/40 transition">
+                  <td className="py-3 px-4 text-[#2C1810]">{s.rollno}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{s.name}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{s.branch}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{s.email}</td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        s.status === "Active"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {s.status}
+                    </span>
                   </td>
-                  <td className="p-2 text-center space-x-3">
+                  <td className="py-3 px-4 flex items-center gap-3">
                     <button
                       onClick={() => toggleStatus(s.id)}
-                      className="text-gray-700 hover:text-[#7c183d]"
+                      className="text-gray-700 hover:text-[#7c183d] font-medium"
                     >
                       {s.status === "Active" ? (
                         <ToggleRight className="w-5 h-5 inline" />
@@ -185,7 +189,7 @@ export default function UsersPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(s.id)}
-                      className="text-red-600 hover:underline"
+                      className="text-red-600 hover:underline font-medium"
                     >
                       <Trash2 className="w-5 h-5 inline" />
                     </button>
@@ -195,22 +199,26 @@ export default function UsersPage() {
 
             {filter === "Teachers" &&
               teachers.map((t) => (
-                <tr key={t.id} className="border-t hover:bg-gray-50">
-                  <td className="p-2 text-[#2C1810]">{t.tid}</td>
-                  <td className="p-2 text-[#2C1810]">{t.name}</td>
-                  <td className="p-2 text-[#2C1810]">{t.branch}</td>
-                  <td className="p-2 text-[#2C1810]">{t.email}</td>
-                  <td
-                    className={`p-2 text-center font-medium ${
-                      t.status === "Active" ? "text-green-600" : "text-red-500"
-                    }`}
-                  >
-                    {t.status}
+                <tr key={t.id} className="border-b border-[#8B1538]/10 hover:bg-[#F5E6D3]/40 transition">
+                  <td className="py-3 px-4 text-[#2C1810]">{t.tid}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{t.name}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{t.branch}</td>
+                  <td className="py-3 px-4 text-[#2C1810]">{t.email}</td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        t.status === "Active"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {t.status}
+                    </span>
                   </td>
-                  <td className="p-2 text-center space-x-3">
+                  <td className="py-3 px-4 flex items-center gap-3">
                     <button
                       onClick={() => toggleStatus(t.id)}
-                      className="text-gray-700 hover:text-[#7c183d]"
+                      className="text-gray-700 hover:text-[#7c183d] font-medium"
                     >
                       {t.status === "Active" ? (
                         <ToggleRight className="w-5 h-5 inline" />
@@ -220,7 +228,7 @@ export default function UsersPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(t.id)}
-                      className="text-red-600 hover:underline"
+                      className="text-red-600 hover:underline font-medium"
                     >
                       <Trash2 className="w-5 h-5 inline" />
                     </button>
