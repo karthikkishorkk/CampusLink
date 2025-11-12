@@ -26,21 +26,21 @@ export default function SettingsPage() {
           </h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#2C1810]">
                 Office / Department
               </label>
               <input
                 type="text"
                 value="CSE Office - Coimbatore Campus"
                 disabled
-                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed"
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed text-[#2C1810] font-medium"
               />
             </div>
 
             <div className="flex items-center justify-between border p-3 rounded-md">
               <div className="flex items-center gap-2">
                 {darkMode ? <Moon className="w-5 h-5 text-gray-600" /> : <Sun className="w-5 h-5 text-gray-600" />}
-                <span className="font-medium text-gray-700">Dark Mode</span>
+                <span className="font-medium text-[#2C1810]">Dark Mode</span>
               </div>
               <button
                 onClick={() => setDarkMode(!darkMode)}
@@ -65,7 +65,7 @@ export default function SettingsPage() {
           </h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between border p-3 rounded-md">
-              <span>Email Notifications</span>
+              <span className="text-[#2C1810] font-medium">Email Notifications</span>
               <button
                 onClick={() => setEmailNotifs(!emailNotifs)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
@@ -81,7 +81,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex items-center justify-between border p-3 rounded-md">
-              <span>In-App Alerts</span>
+              <span className="text-[#2C1810] font-medium">In-App Alerts</span>
               <button
                 onClick={() => setInAppNotifs(!inAppNotifs)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
@@ -105,51 +105,51 @@ export default function SettingsPage() {
           </h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#2C1810]">
                 Admin Name
               </label>
               <input
                 type="text"
                 value="Dr. Karthik Kishor"
                 disabled
-                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed"
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed text-[#2C1810] font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#2C1810]">
                 Admin Email
               </label>
               <input
                 type="email"
                 value="cseoffice@amrita.edu"
                 disabled
-                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed"
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed text-[#2C1810] font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#2C1810]">
                 Role
               </label>
               <input
                 type="text"
                 value="Department Admin"
                 disabled
-                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed"
+                className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 bg-gray-100 cursor-not-allowed text-[#2C1810] font-medium"
               />
             </div>
 
             <div className="flex items-center justify-between border p-3 rounded-md">
               <div className="flex items-center gap-2">
                 <KeyRound className="w-5 h-5 text-gray-600" />
-                <span>Change Password</span>
+                <span className="text-[#2C1810] font-medium">Change Password</span>
               </div>
-              <button className="text-[#7c183d] hover:underline">Change</button>
+              <button className="text-[#7c183d] hover:underline font-medium">Change</button>
             </div>
 
             <div className="flex justify-end">
-              <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+              <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium">
                 <LogOut className="w-4 h-4" /> Logout
               </button>
             </div>
