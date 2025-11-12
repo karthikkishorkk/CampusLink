@@ -42,7 +42,7 @@ class OpeningScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               CustomButton(
-                text: 'Log in as Teacher',
+                text: 'Log in as Faculty',
                 backgroundColor: const Color(0xFF2196F3),
                 textColor: Colors.white,
                 onPressed: () {

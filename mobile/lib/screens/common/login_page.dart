@@ -208,7 +208,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      userRole == 'teacher' ? 'Teacher' : 'Student',
+                      userRole == 'teacher' ? 'Faculty' : 'Student',
                       style: TextStyle(
                         color: userRole == 'teacher' 
                             ? const Color(0xFF2196F3)
@@ -426,7 +426,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      userRole == 'teacher' ? 'Teacher' : 'Student',
+                      userRole == 'teacher' ? 'Faculty' : 'Student',
                       style: TextStyle(
                         color: userRole == 'teacher' 
                             ? const Color(0xFF2196F3)

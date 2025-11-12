@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ClassroomPage extends StatefulWidget {
-  const ClassroomPage({Key? key}) : super(key: key);
+class ClassroomFinderPage extends StatefulWidget {
+  const ClassroomFinderPage({Key? key}) : super(key: key);
 
   @override
-  State<ClassroomPage> createState() => _ClassroomPageState();
+  State<ClassroomFinderPage> createState() => _ClassroomFinderPageState();
 }
 
-class _ClassroomPageState extends State<ClassroomPage> {
+class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
   late DateTime selectedDate;
   String? selectedTimeSlot;
   bool showResults = true; // Show results by default
@@ -191,52 +191,91 @@ class _ClassroomPageState extends State<ClassroomPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Current Date and Time Info
-                    Container(
-                      padding: EdgeInsets.all(screenWidth * 0.04),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF7AB8F7), Color(0xFF9EC8FF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                    // Current Date and Time Info (Tappable to change)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFilterSection = !showFilterSection;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(screenWidth * 0.04),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF7AB8F7), Color(0xFF9EC8FF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(12),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.calendar_today, color: Colors.white, size: 24),
                             ),
-                            child: const Icon(Icons.calendar_today, color: Colors.white, size: 24),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _formatDate(selectedDate),
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _formatDate(selectedDate),
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.3),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text(
+                                          'Tap to change',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  selectedTimeSlot ?? 'Select time slot',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white,
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    selectedTimeSlot ?? 'Select time slot',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            Icon(
+                              showFilterSection ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 

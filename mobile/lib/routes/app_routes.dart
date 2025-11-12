@@ -6,7 +6,7 @@ import '../screens/common/notifications_page.dart';
 import '../screens/common/documents_page.dart';
 import '../screens/common/profile_page.dart';
 import '../screens/common/logout_page.dart';
-import '../screens/teacher/classroom_finder_page.dart';
+import '../screens/common/classroom_finder_page.dart';
 import '../screens/teacher/booking_request_page.dart';
 import '../screens/student/alerts_page.dart';
 

@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 import '../screens/common/home_page.dart';
 import '../screens/common/notifications_page.dart';
 import '../screens/common/profile_page.dart';
-import '../screens/student/classroom_page.dart';
-import '../screens/teacher/classroom_finder_page.dart';
+import '../screens/common/classroom_finder_page.dart';
 import '../screens/teacher/teacher_actions_page.dart';
 import '../providers/user_provider.dart';
 
@@ -43,7 +42,7 @@ class _NavigationState extends State<Navigation> {
       return [
         HomePage(onNavigateToNotifications: _switchToNotifications),
         NotificationsPage(initialTab: _notificationTabIndex, key: ValueKey(_notificationTabIndex)),
-        const ClassroomPage(),
+        const ClassroomFinderPage(),
         const ProfilePage(),
       ];
     }
