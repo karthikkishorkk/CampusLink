@@ -47,7 +47,7 @@ build/
 .packages
 .pub/
 .pub-cache/
-# pubspec.lock  # Consider tracking this for apps (recommended). Uncomment to ignore if you prefer not to track it.
+pubspec.lock
 
 # Generated iOS/Android files
 */ios/Flutter/Flutter.framework

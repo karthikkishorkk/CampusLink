@@ -24,8 +24,25 @@ class _ProfilePageState extends State<ProfilePage> {
     final cardColor = Theme.of(context).cardColor;
     
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
+          ),
+        ),
+        child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(screenWidth * 0.05),
@@ -168,6 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

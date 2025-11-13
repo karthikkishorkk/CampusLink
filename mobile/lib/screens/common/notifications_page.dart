@@ -115,8 +115,25 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
+          ),
+        ),
+        child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -199,6 +216,7 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
             ),
           ],
         ),
+      ),
       ),
     );
   }

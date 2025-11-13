@@ -20,6 +20,7 @@ dependencies:
 
   # Supabase backend
   supabase_flutter: ^2.9.0
+  shared_preferences: ^2.2.2
 
   # File Handling & Opening
   file_picker: ^10.3.6

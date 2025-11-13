@@ -6,41 +6,44 @@ class OpeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF2F2D52),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A), // Dark variant
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0), // #FFF9F0
+                    const Color(0xFFF5E6D3), // #F5E6D3
+                    const Color(0xFFE8D5C4), // #E8D5C4
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 24),
-              const Text(
-                'CampusLink',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w600,
-                ),
+              const Spacer(flex: 1),
+              Image.asset(
+                'assets/images/logobg.png',
+                width: MediaQuery.of(context).size.width * 0.95,
+                fit: BoxFit.contain,
               ),
-              const SizedBox(height: 16),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.0),
-                child: Text(
-                  'Our classroom is large, clean and bright.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFFB8C1D9),
-                    fontSize: 15,
-                    height: 1.6,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
+              const Spacer(flex: 1),
               CustomButton(
                 text: 'Log in as Faculty',
-                backgroundColor: const Color(0xFF2196F3),
-                textColor: Colors.white,
+                backgroundColor: const Color(0xFFD4AF37),
+                textColor: const Color(0xFF2C3E50),
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     '/login',
@@ -48,10 +51,10 @@ class OpeningScreen extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               CustomButton(
                 text: 'Log in as Student',
-                backgroundColor: const Color(0xFF4CAF50),
+                backgroundColor: const Color(0xFF8B1538).withOpacity(0.5),
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.of(context).pushNamed(
@@ -60,7 +63,9 @@ class OpeningScreen extends StatelessWidget {
                   );
                 },
               ),
+              const Spacer(flex: 1),
             ],
+            ),
           ),
         ),
       ),

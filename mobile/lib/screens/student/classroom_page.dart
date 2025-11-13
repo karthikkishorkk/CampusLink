@@ -209,7 +209,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(screenWidth * 0.03),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
@@ -300,7 +300,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
                           GestureDetector(
                             onTap: () => _selectDate(context),
                             child: Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(screenWidth * 0.04),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF8F9FA),
                                 borderRadius: BorderRadius.circular(12),
@@ -337,7 +337,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03, vertical: screenWidth * 0.01),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8F9FA),
                               borderRadius: BorderRadius.circular(12),
@@ -445,7 +445,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
                         ),
                         itemCount: freeClassrooms.length,
                         itemBuilder: (context, index) {
-                          return _buildClassroomCard(freeClassrooms[index]);
+                          return _buildClassroomCard(freeClassrooms[index], screenWidth);
                         },
                       ),
                       const SizedBox(height: 20),
@@ -460,7 +460,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
     );
   }
 
-  Widget _buildClassroomCard(String classroomName) {
+  Widget _buildClassroomCard(String classroomName, double screenWidth) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -497,7 +497,7 @@ class _ClassroomPageState extends State<ClassroomPage> {
           ),
           const SizedBox(height: 4),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.015, vertical: screenWidth * 0.005),
             decoration: BoxDecoration(
               color: Colors.green.shade100,
               borderRadius: BorderRadius.circular(8),
