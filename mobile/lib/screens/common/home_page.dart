@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/supabase_service.dart'; // Import your service
 import './notifications_page.dart';
 import '../../widgets/event_card.dart';
 
@@ -12,39 +13,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Sample events data
-  final List<Map<String, dynamic>> upcomingEvents = [
-    {
-      'title': 'Tech Fest 2024',
-      'date': 'Nov 20-22, 2024',
-      'time': '9:00 AM - 6:00 PM',
-      'location': 'Main Auditorium',
-      'color': const Color(0xFF7AB8F7),
-    },
-    {
-      'title': 'Guest Lecture: AI & ML',
-      'date': 'Nov 15, 2024',
-      'time': '2:00 PM - 4:00 PM',
-      'location': 'Room S201',
-      'color': const Color(0xFF9B59B6),
-    },
-    {
-      'title': 'Sports Day',
-      'date': 'Nov 25, 2024',
-      'time': '8:00 AM - 5:00 PM',
-      'location': 'Sports Ground',
-      'color': const Color(0xFFE74C3C),
-    },
-    {
-      'title': 'Cultural Night',
-      'date': 'Nov 30, 2024',
-      'time': '6:00 PM - 10:00 PM',
-      'location': 'Open Air Theatre',
-      'color': const Color(0xFFF39C12),
-    },
+  // Dynamic Events Future
+  late Future<List<Map<String, dynamic>>> _eventsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _eventsFuture = SupabaseService.getGlobalEvents();
+  }
+
+  // Helper to format date strings from "2025-11-20" to "Nov 20"
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateTime.parse(dateStr);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return "${months[date.month - 1]} ${date.day}, ${date.year}";
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  // Card Colors to cycle through
+  final List<Color> _cardColors = const [
+    Color(0xFF7AB8F7),
+    Color(0xFF9B59B6),
+    Color(0xFFE74C3C),
+    Color(0xFFF39C12),
   ];
 
-  // Sample notifications data - in real app, this would come from a shared state/provider
+  // Sample notifications data - KEPT HARDCODED AS REQUESTED
   final List<Map<String, dynamic>> allNotifications = [
     {
       'title': 'Urgent: Exam Schedule Released',
@@ -136,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: screenHeight * 0.03),
 
-                // Events Section - Horizontal Scrollable
+                // Events Section - DYNAMIC via Supabase
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -150,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // TODO: Navigate to all events page
+                        // TODO: Navigate to all events page if needed
                       },
                       child: const Text(
                         'View All',
@@ -166,17 +163,34 @@ class _HomePageState extends State<HomePage> {
                 
                 SizedBox(
                   height: 240,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: upcomingEvents.length,
-                    itemBuilder: (context, index) {
-                      final event = upcomingEvents[index];
-                      return EventCard(
-                        title: event['title']!,
-                        date: event['date']!,
-                        time: event['time']!,
-                        location: event['location']!,
-                        color: event['color']!,
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _eventsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("Error loading events"));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text("No upcoming events"));
+                      }
+
+                      final events = snapshot.data!;
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          // Cycle through colors
+                          final color = _cardColors[index % _cardColors.length];
+                          
+                          return EventCard(
+                            title: event['title'] ?? 'No Title',
+                            date: _formatDate(event['start_date'] ?? ''),
+                            time: 'All Day', // We didn't store time in DB, so defaulting
+                            location: 'Campus', // We didn't store loc in DB, so defaulting
+                            color: color,
+                          );
+                        },
                       );
                     },
                   ),
@@ -246,7 +260,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _navigateToNotifications(int tabIndex) {
-    // Use callback if provided (when in navigation), otherwise push new page
     if (widget.onNavigateToNotifications != null) {
       widget.onNavigateToNotifications!(tabIndex);
     } else {

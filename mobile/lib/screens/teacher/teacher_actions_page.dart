@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'post_assignment_page.dart';
 import 'manage_assignments_page.dart';
+import 'manage_event_page.dart';
 
 class TeacherActionsPage extends StatefulWidget {
   const TeacherActionsPage({Key? key}) : super(key: key);
@@ -411,6 +412,23 @@ class _TeacherActionsPageState extends State<TeacherActionsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ManageAssignmentsPage()),
+                );
+              },
+            ),
+
+            SizedBox(height: screenWidth * 0.04),
+
+            // Manage Events Card
+            _buildActionCard(
+              context: context,
+              icon: Icons.event,
+              iconColor: const Color(0xFF9B59B6),
+              title: 'Manage Events',
+              description: 'Post new events or delete old ones',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ManageEventPage()),
                 );
               },
             ),
