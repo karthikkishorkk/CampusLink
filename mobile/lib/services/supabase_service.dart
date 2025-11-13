@@ -238,7 +238,30 @@ class SupabaseService {
       'file_url': fileUrl,
       'uploaded_by': teacherId, // This now correctly points to a teacher's ID
       'branch': branch, // The new branch field
+      'file_path': filePath,
     });
+  }
+
+  static Future<List<Map<String, dynamic>>> getAssignmentsByTeacher(String teacherId) async {
+    final response = await client
+        .from('documents')
+        .select() // Select all fields, including the new file_path
+        .eq('uploaded_by', teacherId)
+        .order('created_at', ascending: false);
+        
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  static Future<void> deleteAssignment({
+    required String documentId, // The 'id' of the row in the table
+    required String filePath, // The 'file_path' we stored
+  }) async {
+    
+    // Step 1: Delete the file from Storage
+    await client.storage.from('assignments').remove([filePath]);
+
+    // Step 2: Delete the record from the database
+    await client.from('documents').delete().eq('id', documentId);
   }
 
   // New function for students to get assignments for their branch

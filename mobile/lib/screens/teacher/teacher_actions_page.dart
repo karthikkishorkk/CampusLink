@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'post_assignment_page.dart';
+import 'manage_assignments_page.dart';
 
 class TeacherActionsPage extends StatefulWidget {
   const TeacherActionsPage({Key? key}) : super(key: key);
@@ -393,6 +394,23 @@ class _TeacherActionsPageState extends State<TeacherActionsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const PostAssignmentPage()),
+                );
+              },
+            ),
+
+            SizedBox(height: screenWidth * 0.04),
+
+            // Manage Assignments Card
+            _buildActionCard(
+              context: context,
+              icon: Icons.edit_document,
+              iconColor: const Color(0xFF3498DB), // A different blue
+              title: 'Manage Assignments',
+              description: 'Delete or edit your posted assignments',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ManageAssignmentsPage()),
                 );
               },
             ),
