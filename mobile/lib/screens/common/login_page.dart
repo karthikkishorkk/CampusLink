@@ -635,7 +635,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             controller: branchController,
             style: TextStyle(color: textColor),
             decoration: InputDecoration(
-              hintText: 'Branch / Department (optional)',
+              hintText: 'Branch_Section / Department (eg: CSE_B)',
               prefixIcon: Icon(Icons.account_tree_outlined, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
               hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
