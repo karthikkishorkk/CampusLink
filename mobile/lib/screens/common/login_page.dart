@@ -87,24 +87,39 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          // Blue Background (Full Screen)
+          // Background (Full Screen)
           Container(
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color(0xFF7AB8F7),
-                  const Color(0xFF9EC8FF),
-                  const Color(0xFFB8D8FF),
-                ],
-              ),
+              gradient: isDark 
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF1A237E),
+                      const Color(0xFF283593),
+                      const Color(0xFF3949AB),
+                    ],
+                  )
+                : LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF7AB8F7),
+                      const Color(0xFF9EC8FF),
+                      const Color(0xFFB8D8FF),
+                    ],
+                  ),
             ),
           ),
 
@@ -188,11 +203,15 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSignInCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return Container(
       constraints: const BoxConstraints(maxHeight: 500),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
@@ -209,12 +228,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Log in',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2C3E50),
+                  color: textColor,
                 ),
               ),
               // Role Badge
@@ -262,7 +281,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             'Enter your account details to Log in',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade600,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
           ),
           const SizedBox(height: 30),
@@ -293,12 +312,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           TextField(
             controller: passwordController,
             obscureText: obscurePassword,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: 'Password',
-              prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.lock_outline, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -310,7 +330,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               suffixIcon: IconButton(
                 icon: Icon(
                   obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey.shade600,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                 ),
                 onPressed: () {
                   setState(() {
@@ -424,11 +444,15 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSignUpCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return Container(
       constraints: const BoxConstraints(maxHeight: 700),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
@@ -446,12 +470,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Sign up',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2C3E50),
+                  color: textColor,
                 ),
               ),
               // Role Badge
@@ -499,7 +523,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             'Create your account to get started',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade600,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
           ),
           const SizedBox(height: 20),
@@ -507,12 +531,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           // Name Field
           TextField(
             controller: nameController,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: 'Full Name',
-              prefixIcon: Icon(Icons.person_outline, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.person_outline, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -529,12 +554,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           TextField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.email_outlined, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -551,12 +577,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           TextField(
             controller: passwordController,
             obscureText: obscurePassword,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: 'Password',
-              prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.lock_outline, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -568,7 +595,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               suffixIcon: IconButton(
                 icon: Icon(
                   obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey.shade600,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                 ),
                 onPressed: () {
                   setState(() {
@@ -584,12 +611,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           // ID / Roll No or TID Field
           TextField(
             controller: idController,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: userRole == 'teacher' ? 'Teacher ID (TID)' : 'Roll Number',
-              prefixIcon: Icon(Icons.badge_outlined, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.badge_outlined, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -605,12 +633,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           // Branch / Department (optional)
           TextField(
             controller: branchController,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText: 'Branch / Department (optional)',
-              prefixIcon: Icon(Icons.account_tree_outlined, color: Colors.grey.shade600),
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              prefixIcon: Icon(Icons.account_tree_outlined, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              hintStyle: TextStyle(color: isDark ? Colors.grey.shade500 : Colors.grey.shade400),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: isDark ? Colors.grey.shade800 : Colors.grey.shade100,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,

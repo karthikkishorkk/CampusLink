@@ -110,9 +110,12 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,13 +125,13 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
               padding: EdgeInsets.all(screenWidth * 0.05),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
                     'Notifications',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C3E50),
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -141,13 +144,13 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: TabBar(
                   controller: _tabController,
                   labelColor: Colors.white,
-                  unselectedLabelColor: const Color(0xFF2C3E50),
+                  unselectedLabelColor: isDark ? Colors.grey.shade300 : const Color(0xFF2C3E50),
                   labelStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -202,19 +205,20 @@ class _NotificationsPageState extends State<NotificationsPage> with SingleTicker
 
   Widget _buildNotificationList(List<Map<String, dynamic>> notificationsList) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     if (notificationsList.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notifications_off_outlined, size: 80, color: Colors.grey.shade300),
+            Icon(Icons.notifications_off_outlined, size: 80, color: isDark ? Colors.grey.shade700 : Colors.grey.shade300),
             const SizedBox(height: 16),
             Text(
               'No notifications',
               style: TextStyle(
                 fontSize: 18,
-                color: Colors.grey.shade500,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
               ),
             ),
           ],
@@ -262,13 +266,17 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -297,15 +305,15 @@ class NotificationCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                    Row(
                     children: [
                       Expanded(
                         child: Text(
                           notification['title']!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: Color(0xFF2C3E50),
+                            color: textColor,
                           ),
                         ),
                       ),
@@ -332,7 +340,7 @@ class NotificationCard extends StatelessWidget {
                     notification['date']!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -340,7 +348,7 @@ class NotificationCard extends StatelessWidget {
                     notification['message']!,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade700,
+                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -378,8 +386,13 @@ class NotificationDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final cardColor = Theme.of(context).cardColor;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -390,16 +403,16 @@ class NotificationDetailsPage extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
+                    icon: Icon(Icons.arrow_back, color: textColor),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Notification Details',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C3E50),
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -410,7 +423,7 @@ class NotificationDetailsPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -426,17 +439,17 @@ class NotificationDetailsPage extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2C3E50),
+                        color: textColor,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       date,
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                         fontSize: 14,
                       ),
                     ),
@@ -445,7 +458,7 @@ class NotificationDetailsPage extends StatelessWidget {
                       message,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey.shade800,
+                        color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
                         height: 1.5,
                       ),
                     ),

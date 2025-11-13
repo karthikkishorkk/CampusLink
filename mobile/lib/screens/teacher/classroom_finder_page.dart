@@ -29,33 +29,50 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
   @override
   void initState() {
     super.initState();
-    // Set today's date and current time slot by default
-    selectedDate = DateTime.now();
-    selectedTimeSlot = _getCurrentTimeSlot();
+    // Set today's date and current time slot by default based on device time
+    final now = DateTime.now();
+    final nowMinutes = now.hour * 60 + now.minute;
+    const cutoffMinutes = 13 * 60 + 20; // 13:20
+    if (nowMinutes >= cutoffMinutes) {
+      selectedDate = now.add(const Duration(days: 1));
+      if (timeSlots.isNotEmpty) {
+        final first = timeSlots.first;
+        selectedTimeSlot = '${first['start']} - ${first['end']}';
+      } else {
+        selectedTimeSlot = null;
+      }
+    } else {
+      selectedDate = now;
+      selectedTimeSlot = _getCurrentTimeSlot();
+    }
   }
 
   // Get current time slot based on device time
   String? _getCurrentTimeSlot() {
     final now = TimeOfDay.now();
     final currentMinutes = now.hour * 60 + now.minute;
-    
+
     for (var slot in timeSlots) {
       final startParts = slot['start']!.split(':');
       final startMinutes = int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
       final endParts = slot['end']!.split(':');
       final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
-      
+
       if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
         return '${slot['start']} - ${slot['end']}';
       }
     }
-    
-    // If current time is past all slots, return the first slot
+
+    // If current time is past cutoff (1:20 PM), return null so caller can advance date
+    const cutoffMinutes = 13 * 60 + 20;
+    if (currentMinutes >= cutoffMinutes) return null;
+
+    // Otherwise return first slot as default
     if (timeSlots.isNotEmpty) {
       final firstSlot = timeSlots.first;
       return '${firstSlot['start']} - ${firstSlot['end']}';
     }
-    
+
     return null;
   }
 
@@ -148,38 +165,29 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final cardColor = Theme.of(context).cardColor;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title with Filter Button
+            // Title (filter removed)
             Padding(
               padding: EdgeInsets.all(screenWidth * 0.05),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Classrooms',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C3E50),
+                      color: textColor,
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      showFilterSection ? Icons.filter_alt : Icons.filter_alt_outlined,
-                      color: const Color(0xFF7AB8F7),
-                      size: 28,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        showFilterSection = !showFilterSection;
-                      });
-                    },
                   ),
                 ],
               ),
@@ -285,7 +293,7 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                     if (showFilterSection) Container(
                       padding: EdgeInsets.all(screenWidth * 0.05),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -302,16 +310,16 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Filter Classrooms',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF2C3E50),
+                                  color: textColor,
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.close, color: Color(0xFF2C3E50)),
+                                icon: Icon(Icons.close, color: textColor),
                                 onPressed: () {
                                   setState(() {
                                     showFilterSection = false;
@@ -323,12 +331,12 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                           const SizedBox(height: 12),
 
                           // Date Selection
-                          const Text(
+                          Text(
                             'Change Date',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF2C3E50),
+                              color: textColor,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -337,9 +345,9 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8F9FA),
+                                color: isDark ? Colors.grey.shade800 : const Color(0xFFF8F9FA),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade300),
+                                border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade300),
                               ),
                               child: Row(
                                 children: [
@@ -347,9 +355,9 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                                   const SizedBox(width: 12),
                                   Text(
                                     '${_formatDate(selectedDate)} - ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
-                                      color: Color(0xFF2C3E50),
+                                      color: textColor,
                                     ),
                                   ),
                                   const Spacer(),
@@ -362,21 +370,21 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                           const SizedBox(height: 20),
 
                           // Time Slot Selection
-                          const Text(
+                          Text(
                             'Change Time Slot',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF2C3E50),
+                              color: textColor,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8F9FA),
+                              color: isDark ? Colors.grey.shade800 : const Color(0xFFF8F9FA),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey.shade300),
+                              border: Border.all(color: isDark ? Colors.grey.shade700 : Colors.grey.shade300),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -458,10 +466,10 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                           const SizedBox(width: 8),
                           Text(
                             '${freeClassrooms.length} Available Classrooms',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF2C3E50),
+                              color: textColor,
                             ),
                           ),
                         ],
@@ -496,9 +504,12 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
   }
 
   Widget _buildClassroomCard(String classroomName) {
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0xFF7AB8F7).withOpacity(0.3),
@@ -524,10 +535,10 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
           const SizedBox(height: 6),
           Text(
             classroomName,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2C3E50),
+              color: textColor,
             ),
           ),
           const SizedBox(height: 4),

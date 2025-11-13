@@ -6,6 +6,7 @@ import 'providers/user_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/classroom_provider.dart';
 import 'providers/event_provider.dart';
+import 'providers/theme_provider.dart';
 import 'config/supabase_config.dart';
 
 void main() async {
@@ -30,16 +31,31 @@ class ClassroomApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ClassroomProvider()),
         ChangeNotifierProvider(create: (_) => EventProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
-        title: 'CampusLink',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: 'Poppins',
-          primarySwatch: Colors.blue,
-        ),
-        initialRoute: '/opening',
-        routes: appRoutes,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'CampusLink',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              fontFamily: 'Poppins',
+              primarySwatch: Colors.blue,
+              scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              fontFamily: 'Poppins',
+              primaryColor: const Color(0xFF7AB8F7),
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              cardColor: const Color(0xFF1E1E1E),
+            ),
+            themeMode: themeProvider.themeMode,
+            initialRoute: '/opening',
+            routes: appRoutes,
+          );
+        },
       ),
     );
   }

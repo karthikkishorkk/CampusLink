@@ -103,9 +103,13 @@ class _HomePageState extends State<HomePage> {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final cardColor = Theme.of(context).cardColor;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -114,12 +118,12 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Welcome Header
-                const Text(
+                Text(
                   'Dashboard',
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2C3E50),
+                    color: textColor,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.01),
@@ -127,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                   'Welcome back!',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey.shade600,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.03),
@@ -136,12 +140,12 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Upcoming Events',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2C3E50),
+                        color: textColor,
                       ),
                     ),
                     TextButton(
@@ -304,6 +308,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCompactNotificationCard(Map<String, dynamic> notification, {bool isCompact = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -321,7 +329,7 @@ class _HomePageState extends State<HomePage> {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -340,10 +348,10 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: Text(
                     notification['title']!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
-                      color: Color(0xFF2C3E50),
+                      color: textColor,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -358,7 +366,7 @@ class _HomePageState extends State<HomePage> {
               notification['date']!,
               style: TextStyle(
                 fontSize: 11,
-                color: Colors.grey.shade600,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
               ),
             ),
             const SizedBox(height: 6),
@@ -366,7 +374,7 @@ class _HomePageState extends State<HomePage> {
               notification['message']!,
               style: TextStyle(
                 fontSize: 11,
-                color: Colors.grey.shade700,
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

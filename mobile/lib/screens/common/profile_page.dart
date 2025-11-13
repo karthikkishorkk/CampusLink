@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import 'user_profile_edit_page.dart';
 import 'change_password_page.dart';
 
@@ -10,16 +12,19 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool isDarkMode = false;
   bool pushNotifications = true;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final cardColor = Theme.of(context).cardColor;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -28,12 +33,12 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Profile Heading - bigger and more left
-                const Text(
+                Text(
                 'Profile',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2C3E50),
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 30),
@@ -50,15 +55,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Welcome',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(fontSize: 14, color: isDark ? Colors.grey.shade400 : Colors.grey),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Mr. John Doe',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
                         ),
                       ],
                     ),
@@ -82,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // User Profile option
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
@@ -102,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // Change Password option
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
@@ -122,17 +127,19 @@ class _ProfilePageState extends State<ProfilePage> {
               // Dark Mode toggle
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: SwitchListTile(
                   secondary: const Icon(Icons.dark_mode_outlined, color: Color(0xFF7AB8F7)),
                   title: const Text('Dark Mode'),
-                  value: isDarkMode,
+                  subtitle: Text(
+                    isDark ? 'Dark theme enabled' : 'Light theme enabled',
+                    style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                  ),
+                  value: isDark,
                   onChanged: (value) {
-                    setState(() {
-                      isDarkMode = value;
-                    });
+                    Provider.of<ThemeProvider>(context, listen: false).toggleDarkMode(value);
                   },
                   activeColor: const Color(0xFF7AB8F7),
                 ),
@@ -142,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // Push Notifications toggle
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: SwitchListTile(

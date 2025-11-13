@@ -46,16 +46,21 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final cardColor = Theme.of(context).cardColor;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: cardColor,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
+        title: Text(
           'Assignments',
           style: TextStyle(
-            color: Color(0xFF2C3E50),
+            color: textColor,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -71,13 +76,16 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Text(
                   'No assignments have been posted for your branch yet.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  style: TextStyle(
+                    color: isDark ? Colors.grey.shade400 : Colors.grey, 
+                    fontSize: 16
+                  ),
                 ),
               ),
             );
@@ -94,6 +102,7 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
               final teacherName = teacher != null ? teacher['name'] : 'Unknown';
 
               return Card(
+                color: cardColor,
                 margin: const EdgeInsets.only(bottom: 16.0),
                 elevation: 2,
                 shadowColor: Colors.black.withOpacity(0.1),
@@ -106,11 +115,17 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
                   ),
                   title: Text(
                     doc['name'] ?? 'No Title',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 16,
+                      color: textColor,
+                    ),
                   ),
                   subtitle: Text(
                     'Posted by: $teacherName\n${doc['category'] ?? ''}',
-                    style: const TextStyle(color: Colors.black54),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey.shade400 : Colors.black54,
+                    ),
                   ),
                   trailing: const Icon(Icons.download_for_offline, color: Color(0xFF7AB8F7)),
                   onTap: () {
