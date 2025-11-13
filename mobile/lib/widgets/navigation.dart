@@ -6,6 +6,7 @@ import '../screens/common/notifications_page.dart';
 import '../screens/common/profile_page.dart';
 import '../screens/common/classroom_finder_page.dart';
 import '../screens/teacher/teacher_actions_page.dart';
+import '../screens/student/student_assignments_page.dart';
 import '../providers/user_provider.dart';
 
 class Navigation extends StatefulWidget {
@@ -34,16 +35,17 @@ class _NavigationState extends State<Navigation> {
         HomePage(onNavigateToNotifications: _switchToNotifications),
         NotificationsPage(initialTab: _notificationTabIndex, key: ValueKey(_notificationTabIndex)),
         const TeacherActionsPage(), // Index 2 - + button page
-        const ClassroomFinderPage(), // Index 3 - Classroom
-        const ProfilePage(), // Index 4
+        ClassroomFinderPage(), // Index 3 - Classroom
+        ProfilePage(), // Index 4
       ];
     } else {
-      // Students only have 4 pages
+      // Students only have 5 pages
       return [
         HomePage(onNavigateToNotifications: _switchToNotifications),
         NotificationsPage(initialTab: _notificationTabIndex, key: ValueKey(_notificationTabIndex)),
-        const ClassroomFinderPage(),
-        const ProfilePage(),
+        StudentAssignmentsPage(),
+        ClassroomFinderPage(),
+        ProfilePage(),
       ];
     }
   }
@@ -71,32 +73,17 @@ class _NavigationState extends State<Navigation> {
             Icon(Icons.class_outlined, size: 30, color: _currentIndex == 3 ? Colors.white : const Color(0xFF7AB8F7)),
             Icon(Icons.person_outline, size: 30, color: _currentIndex == 4 ? Colors.white : const Color(0xFF7AB8F7)),
           ] : <Widget>[
-            // STUDENT: 4 icons (Home, Notifications, Classroom, Profile)
+            // STUDENT: 5 icons (Home, Notifications, Assignments, Classroom, Profile)
             Icon(Icons.home_outlined, size: 30, color: _currentIndex == 0 ? Colors.white : const Color(0xFF7AB8F7)),
             Icon(Icons.notifications_outlined, size: 30, color: _currentIndex == 1 ? Colors.white : const Color(0xFF7AB8F7)),
-            Icon(Icons.school_outlined, size: 30, color: _currentIndex == 2 ? Colors.white : const Color(0xFF7AB8F7)),
-            Icon(Icons.person_outline, size: 30, color: _currentIndex == 3 ? Colors.white : const Color(0xFF7AB8F7)),
+            Icon(Icons.description_outlined, size: 30, color: _currentIndex == 2 ? Colors.white : const Color(0xFF7AB8F7)),
+            Icon(Icons.school_outlined, size: 30, color: _currentIndex == 3 ? Colors.white : const Color(0xFF7AB8F7)),
+            Icon(Icons.person_outline, size: 30, color: _currentIndex == 4 ? Colors.white : const Color(0xFF7AB8F7)),
           ],
           onTap: (index) {
-            if (isTeacher) {
-              // Teacher navigation
-              if (index == 3) {
-                // Classroom icon (4th position) -> navigate to index 3
-                setState(() {
-                  _currentIndex = 3;
-                });
-              } else {
-                // All other icons work normally
-                setState(() {
-                  _currentIndex = index;
-                });
-              }
-            } else {
-              // Student navigation - straightforward
-              setState(() {
-                _currentIndex = index;
-              });
-            }
+            setState(() {
+              _currentIndex = index;
+            });
           },
         ),
       ),

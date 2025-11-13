@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
@@ -75,12 +76,14 @@ class SupabaseService {
   }
   
   static Future<void> createTeacher({
+    required String id,
     required String tid,
     required String name,
     required String branch,
     required String email,
   }) async {
     await client.from('teachers').insert({
+      'id': id,
       'tid': tid,
       'name': name,
       'branch': branch,
@@ -205,28 +208,48 @@ class SupabaseService {
   }
   
   // Documents Management
-  static Future<List<Map<String, dynamic>>> getDocuments({String? category}) async {
-    var query = client.from('documents').select('*, admins(name)');
-    
-    if (category != null) {
-      query = query.eq('category', category);
-    }
-    
-    final response = await query.order('created_at', ascending: false);
-    return List<Map<String, dynamic>>.from(response);
-  }
-  
-  static Future<void> uploadDocument({
-    required String name,
-    required String category,
-    required String fileUrl,
-    required String uploadedBy,
+  static Future<void> uploadAssignment({
+    required File file,
+    required String title,
+    required String caption, // Using 'category' field for this
+    required String branch,
+    required String teacherId,
   }) async {
+    // 1. Create a unique file path
+    final fileExtension = file.path.split('.').last;
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+    final filePath = '$branch/$fileName';
+
+    // 2. Upload the file to Supabase Storage
+    //    (You'll need to create a 'assignments' bucket in Supabase Storage)
+    await client.storage.from('assignments').upload(
+          filePath,
+          file,
+          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+        );
+
+    // 3. Get the public URL
+    final fileUrl = client.storage.from('assignments').getPublicUrl(filePath);
+
+    // 4. Insert the record into the 'documents' table
     await client.from('documents').insert({
-      'name': name,
-      'category': category,
+      'name': title,
+      'category': caption, // Using 'category' field for caption as planned
       'file_url': fileUrl,
-      'uploaded_by': uploadedBy,
+      'uploaded_by': teacherId, // This now correctly points to a teacher's ID
+      'branch': branch, // The new branch field
     });
+  }
+
+  // New function for students to get assignments for their branch
+  static Future<List<Map<String, dynamic>>> getAssignmentsByBranch(
+      String branch) async {
+    final response = await client
+        .from('documents')
+        .select('*, teachers(name)') // Joins with teachers table to get name
+        .eq('branch', branch)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }

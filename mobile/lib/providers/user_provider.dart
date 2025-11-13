@@ -6,6 +6,7 @@ class UserProvider with ChangeNotifier {
   String _name = 'John Doe';
   String _email = '';
   String _rollNumber = '';
+  String _userBranch = '';
   bool _isAuthenticated = false;
   String? _userId;
 
@@ -14,6 +15,7 @@ class UserProvider with ChangeNotifier {
   String get name => _name;
   String get email => _email;
   String get rollNumber => _rollNumber;
+  String get userBranch => _userBranch;
   bool get isAuthenticated => _isAuthenticated;
   bool get isTeacher => _role == 'teacher';
   bool get isStudent => _role == 'student';
@@ -33,12 +35,14 @@ class UserProvider with ChangeNotifier {
         _role = 'student';
         _name = student['name'];
         _rollNumber = student['roll_no'];
+        _userBranch = student['branch'];
       } else {
         final teacher = await SupabaseService.getTeacherByEmail(_email);
         if (teacher != null) {
           _role = 'teacher';
           _name = teacher['name'];
           _rollNumber = teacher['tid'];
+          _userBranch = teacher['branch'];
         }
       }
       notifyListeners();
@@ -67,12 +71,14 @@ class UserProvider with ChangeNotifier {
           _role = 'student';
           _name = student['name'];
           _rollNumber = student['roll_no'];
+          _userBranch = student['branch'];
         } else {
           final teacher = await SupabaseService.getTeacherByEmail(email);
           if (teacher != null) {
             _role = 'teacher';
             _name = teacher['name'];
             _rollNumber = teacher['tid'];
+            _userBranch = teacher['branch'];
           } else {
             throw Exception('User not found in students or teachers table');
           }
@@ -116,6 +122,7 @@ class UserProvider with ChangeNotifier {
           );
         } else {
           await SupabaseService.createTeacher(
+            id: response.user!.id,
             tid: idNumber,
             name: name,
             branch: branch ?? '',
@@ -128,6 +135,7 @@ class UserProvider with ChangeNotifier {
         _name = name;
         _email = email;
         _rollNumber = idNumber;
+        _userBranch = branch ?? '';
         _isAuthenticated = true;
         notifyListeners();
       }
@@ -143,6 +151,7 @@ class UserProvider with ChangeNotifier {
     _name = '';
     _email = '';
     _rollNumber = '';
+    _userBranch = '';
     _userId = null;
     _isAuthenticated = false;
     notifyListeners();

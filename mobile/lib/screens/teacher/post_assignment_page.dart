@@ -1,6 +1,9 @@
 import 'dart:io'; // Used to store the file
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart'; // To pick the file
+import 'package:provider/provider.dart';      
+import '../../providers/user_provider.dart';    
+import '../../services/supabase_service.dart';
 
 class PostAssignmentPage extends StatefulWidget {
   const PostAssignmentPage({Key? key}) : super(key: key);
@@ -54,27 +57,50 @@ class _PostAssignmentPageState extends State<PostAssignmentPage> {
       _isLoading = true;
     });
 
-    // --- TODO: Backend Upload Logic ---
-    // 1. Upload the _selectedFile to your Supabase Storage.
-    // 2. Get the public URL or file path.
-    // 3. Save the record to your 'Documents' table with the
-    //    title, caption, file path, and teacher's user ID.
+    try {
+      // 1. Get user data from Provider
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final String teacherId = userProvider.userId ?? '';
+      final String branch = userProvider.userBranch; // <-- Now this works!
 
-    // For now, we'll just simulate a delay and show success
-    await Future.delayed(const Duration(seconds: 2));
+      if (teacherId.isEmpty || branch.isEmpty) {
+        throw Exception('User data not found. Please log in again.');
+      }
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Assignment posted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      // 2. Call the new service function
+      await SupabaseService.uploadAssignment(
+        file: _selectedFile!,
+        title: _titleController.text.trim(),
+        caption: _captionController.text.trim(),
+        branch: branch,
+        teacherId: teacherId,
       );
-      Navigator.pop(context); // Go back to the previous screen
+
+      // 3. Show success
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Assignment posted successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context); // Go back to the previous screen
+      }
+    } catch (e) {
+      // 4. Add error handling
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Upload failed: ${e.toString()}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } finally {
+      // 5. Always stop loading
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
