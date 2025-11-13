@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -16,8 +18,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController branchController = TextEditingController();
   bool obscurePassword = true;
   String userRole = 'student'; // Default role
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -315,12 +320,26 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {
-                // Navigate to dashboard with role
-                Navigator.of(context).pushReplacementNamed(
-                  '/dashboard',
-                  arguments: {'role': userRole},
-                );
+              onPressed: _isLoading ? null : () async {
+                setState(() { _isLoading = true; });
+                final email = emailController.text.trim();
+                final password = passwordController.text;
+                try {
+                  await Provider.of<UserProvider>(context, listen: false)
+                      .login(email: email, password: password);
+
+                  // On success navigate to dashboard
+                  Navigator.of(context).pushReplacementNamed(
+                    '/dashboard',
+                    arguments: {'role': Provider.of<UserProvider>(context, listen: false).role},
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Login failed: ${e.toString()}')),
+                  );
+                } finally {
+                  setState(() { _isLoading = false; });
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C3E50),
@@ -329,14 +348,16 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Log in',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+              child: _isLoading
+                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text(
+                      'Log in',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: 16),
@@ -372,7 +393,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   Widget _buildSignUpCard() {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 550),
+      constraints: const BoxConstraints(maxHeight: 700),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -385,10 +406,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -440,7 +462,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             'Create your account to get started',
             style: TextStyle(
@@ -448,7 +470,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
 
           // Name Field
           TextField(
@@ -469,7 +491,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Email Field
           TextField(
@@ -491,7 +513,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Password Field
           TextField(
@@ -509,7 +531,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 16,
+                vertical: 14,
               ),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -524,20 +546,94 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-          const SizedBox(height: 30),
+
+          const SizedBox(height: 12),
+
+          // ID / Roll No or TID Field
+          TextField(
+            controller: idController,
+            decoration: InputDecoration(
+              hintText: userRole == 'teacher' ? 'Teacher ID (TID)' : 'Roll Number',
+              prefixIcon: Icon(Icons.badge_outlined, color: Colors.grey.shade600),
+              hintStyle: TextStyle(color: Colors.grey.shade400),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Branch / Department (optional)
+          TextField(
+            controller: branchController,
+            decoration: InputDecoration(
+              hintText: 'Branch / Department (optional)',
+              prefixIcon: Icon(Icons.account_tree_outlined, color: Colors.grey.shade600),
+              hintStyle: TextStyle(color: Colors.grey.shade400),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
 
           // Sign Up Button
           SizedBox(
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement sign up logic based on userRole
-                print('Signing up as: $userRole');
-                print('Name: ${nameController.text}');
-                print('Email: ${emailController.text}');
-                // Navigate to dashboard
-                Navigator.of(context).pushReplacementNamed('/dashboard');
+              onPressed: _isLoading ? null : () async {
+                setState(() { _isLoading = true; });
+                final name = nameController.text.trim();
+                final email = emailController.text.trim();
+                final password = passwordController.text;
+                final idNumber = idController.text.trim();
+                final branch = branchController.text.trim();
+
+                if (name.isEmpty || email.isEmpty || password.isEmpty || idNumber.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all required fields')),
+                  );
+                  setState(() { _isLoading = false; });
+                  return;
+                }
+
+                try {
+                  await Provider.of<UserProvider>(context, listen: false).signUp(
+                    role: userRole,
+                    name: name,
+                    email: email,
+                    password: password,
+                    idNumber: idNumber,
+                    branch: branch,
+                  );
+
+                  Navigator.of(context).pushReplacementNamed(
+                    '/dashboard',
+                    arguments: {'role': Provider.of<UserProvider>(context, listen: false).role},
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Sign up failed: ${e.toString()}')),
+                  );
+                } finally {
+                  setState(() { _isLoading = false; });
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C3E50),
@@ -546,17 +642,19 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Sign up',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+              child: _isLoading
+                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text(
+                      'Sign up',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Already have account
           Row(
@@ -583,6 +681,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ],
           ),
         ],
+        ),
       ),
     );
   }
@@ -593,6 +692,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    idController.dispose();
+    branchController.dispose();
     super.dispose();
   }
 }
