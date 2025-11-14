@@ -16,6 +16,7 @@ export default function EditAlertModal({
   refresh,
 }: EditAlertModalProps) {
   const supabase = supabaseBrowser;
+
   const [title, setTitle] = useState(alertData.title);
   const [description, setDescription] = useState(alertData.description);
   const [type, setType] = useState(alertData.type);
@@ -29,23 +30,31 @@ export default function EditAlertModal({
     setLoading(true);
 
     try {
-      let fileUrl = alertData.file_url;
+      let relativePath = alertData.file_url; // keep old path unless replaced
 
+      // If user selects a new file
       if (file) {
-        const filePath = `alerts/${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("alerts-files")
-          .upload(filePath, file);
+        const ext = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2)}.${ext}`;
+        const filePath = `alerts/${fileName}`;
+
+        const { data: uploadData, error: uploadError } =
+          await supabase.storage
+            .from("alerts-files")
+            .upload(filePath, file, {
+              upsert: true,
+              cacheControl: "3600",
+              contentType: file.type || "application/pdf",
+            });
 
         if (uploadError) throw uploadError;
 
-        const { data: publicUrl } = supabase.storage
-          .from("alerts-files")
-          .getPublicUrl(filePath);
-
-        fileUrl = publicUrl.publicUrl;
+        relativePath = uploadData?.path ?? filePath;
       }
 
+      // Update alert
       const { error } = await supabase
         .from("alerts")
         .update({
@@ -54,18 +63,18 @@ export default function EditAlertModal({
           type,
           start_date: type === "Event" ? startDate : null,
           end_date: type === "Event" ? endDate : null,
-          file_url: fileUrl,
+          file_url: relativePath, // save ONLY relative path
         })
         .eq("id", alertData.id);
 
       if (error) throw error;
 
-      window.alert("✅ Alert updated successfully!");
-      onClose();
+      alert("Updated successfully!");
       refresh();
-    } catch (error: any) {
-      console.error("Update failed:", error.message);
-      window.alert("❌ Failed to update alert.");
+      onClose();
+    } catch (err: any) {
+      console.error("Update failed:", err);
+      alert("Failed to update alert.");
     } finally {
       setLoading(false);
     }
@@ -86,74 +95,51 @@ export default function EditAlertModal({
         </h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Title
-            </label>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#8B1538]"
-              required
-            />
-          </div>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#8B1538]"
-              required
-            />
-          </div>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2"
+            required
+          ></textarea>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Type
-            </label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#8B1538]"
-            >
-              <option value="Alert">Alert</option>
-              <option value="Circular">Circular</option>
-              <option value="Event">Event</option>
-            </select>
-          </div>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2"
+          >
+            <option value="Alert">Alert</option>
+            <option value="Circular">Circular</option>
+            <option value="Event">Event</option>
+          </select>
 
           {type === "Event" && (
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-2"
-                />
-              </div>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="border rounded-lg p-2"
+                required
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="border rounded-lg p-2"
+                required
+              />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
               Replace PDF (optional)
             </label>
             <input
@@ -167,7 +153,7 @@ export default function EditAlertModal({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#8B1538] text-white py-2 rounded-lg hover:bg-[#6B0F28] transition disabled:opacity-50"
+            className="w-full bg-[#8B1538] text-white py-2 rounded-lg hover:bg-[#6B0F28]"
           >
             {loading ? "Updating..." : "Update Alert"}
           </button>
