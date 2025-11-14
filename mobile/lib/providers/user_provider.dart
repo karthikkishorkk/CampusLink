@@ -186,9 +186,18 @@ class UserProvider with ChangeNotifier {
   }
 
   // Update profile
-  void updateProfile({String? name, String? email}) {
-    if (name != null) _name = name;
-    if (email != null) _email = email;
+  Future<void> updateProfile({required String name}) async {
+    if (_userId == null) throw Exception("User not logged in.");
+
+    // 1. Call the new Supabase service
+    await SupabaseService.updateUserProfile(
+      userId: _userId!,
+      userType: _role,
+      data: {'name': name},
+    );
+
+    // 2. Update the local state
+    _name = name;
     notifyListeners();
   }
 }

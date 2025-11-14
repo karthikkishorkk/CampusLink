@@ -331,4 +331,18 @@ class SupabaseService {
         .eq('id', eventId);
   }
 
+  static Future<void> updateUserProfile({
+    required String userId,
+    required String userType, // 'student' or 'teacher'
+    required Map<String, dynamic> data,
+  }) async {
+    // Determine the correct table based on user type
+    final table = userType == 'student' ? 'students' : 'teachers';
+    
+    await client
+        .from(table)
+        .update(data)
+        .eq('id', userId); // Assumes 'id' is the UUID foreign key
+  }
+
 }
