@@ -58,22 +58,16 @@ class _NavigationState extends State<Navigation> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final isTeacher = userProvider.isTeacher || widget.role == 'teacher';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        // If user presses back on the dashboard, do nothing
-        // This prevents going back to the login screen
-      },
-      child: Scaffold(
-        body: _pages[_currentIndex],
-        extendBody: true, // Extend body behind navigation bar
-        bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: const Color(0xFFE8D5C4), // Last color from gradient
-          color: const Color(0xFF8B1538),
+    return Scaffold(
+      body: _pages[_currentIndex],
+      extendBody: true, // Extend body behind navigation bar
+      bottomNavigationBar: CurvedNavigationBar(
+          backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFE8D5C4),
+          color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538), // Creamy in dark mode, maroon in light
           buttonBackgroundColor: const Color(0xFFD4AF37),
-          height: 65,
+          height: 75,
           animationDuration: const Duration(milliseconds: 300),
           index: _currentIndex,
           items: isTeacher
@@ -81,37 +75,57 @@ class _NavigationState extends State<Navigation> {
                   // TEACHER: Home, Notifications, +, Classroom, Profile
                   Icon(Icons.home_outlined,
                       size: 30,
-                      color: _currentIndex == 0 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 0 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.notifications_outlined,
                       size: 30,
-                      color: _currentIndex == 1 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 1 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.add_circle_outline,
                       size: 35,
-                      color: _currentIndex == 2 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 2 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.class_outlined,
                       size: 30,
-                      color: _currentIndex == 3 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 3 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.person_outline,
                       size: 30,
-                      color: _currentIndex == 4 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 4 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                 ]
               : <Widget>[
                   // STUDENT: Home, Alerts, Assignments, Classroom, Profile
                   Icon(Icons.home_outlined,
                       size: 30,
-                      color: _currentIndex == 0 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 0 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.notifications_outlined,
                       size: 30,
-                      color: _currentIndex == 1 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 1 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.description_outlined,
                       size: 30,
-                      color: _currentIndex == 2 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 2 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.school_outlined,
                       size: 30,
-                      color: _currentIndex == 3 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 3 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                   Icon(Icons.person_outline,
                       size: 30,
-                      color: _currentIndex == 4 ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0)),
+                      color: _currentIndex == 4 
+                          ? (isDark ? const Color(0xFF1A1A1A) : const Color(0xFF8B1538))
+                          : (isDark ? const Color(0xFF8B1538) : const Color(0xFFFFF9F0))),
                 ],
           onTap: (index) {
             setState(() {
@@ -119,7 +133,6 @@ class _NavigationState extends State<Navigation> {
             });
           },
         ),
-      ), // End of Scaffold
-    ); // End of PopScope
+      ); // End of Scaffold
   }
 }

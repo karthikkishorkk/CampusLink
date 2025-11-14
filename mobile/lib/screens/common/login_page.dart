@@ -87,41 +87,27 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final cardColor = Theme.of(context).cardColor;
-    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     
+    // Always use light mode colors for login/signup screen
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          // Background (Full Screen)
+          // Background (Full Screen) - Always light mode gradient
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
-              gradient: isDark 
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      const Color(0xFF1A237E),
-                      const Color(0xFF283593),
-                      const Color(0xFF3949AB),
-                    ],
-                  )
-                : LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      const Color(0xFFFFF9F0), // #FFF9F0
-                      const Color(0xFFF5E6D3), // #F5E6D3
-                      const Color(0xFFE8D5C4), // #E8D5C4
-                    ],
-                  ),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFFFF9F0), // #FFF9F0
+                  Color(0xFFF5E6D3), // #F5E6D3
+                  Color(0xFFE8D5C4), // #E8D5C4
+                ],
+              ),
             ),
           ),
 
@@ -195,9 +181,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSignInCard() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = Theme.of(context).cardColor;
-    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     
@@ -318,7 +301,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               suffixIcon: IconButton(
                 icon: Icon(
                   obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  color: Colors.grey.shade600,
                 ),
                 onPressed: () {
                   setState(() {
@@ -432,9 +415,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSignUpCard() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = Theme.of(context).cardColor;
-    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     
@@ -578,7 +558,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               suffixIcon: IconButton(
                 icon: Icon(
                   obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  color: Colors.grey.shade600,
                 ),
                 onPressed: () {
                   setState(() {

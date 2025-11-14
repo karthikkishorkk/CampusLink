@@ -67,30 +67,72 @@ class _ManageEventPageState extends State<ManageEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text('Manage Events', style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF2C3E50)),
-        actions: [
-          // Pencil Icon to create new event
-          IconButton(
-            icon: const Icon(Icons.add, color: Color(0xFF2C3E50)), // Using 'add' as it's more common than pencil
-            onPressed: () async {
-              // Navigate to create page and refresh when popped
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateEventPage()),
-              );
-              // When we come back from the create page, reload events
-              _loadEvents();
-            },
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
           ),
-        ],
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom AppBar
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Manage Events',
+                        style: TextStyle(
+                          color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'serif',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Add Icon to create new event
+                    IconButton(
+                      icon: Icon(Icons.add, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
+                      onPressed: () async {
+                        // Navigate to create page and refresh when popped
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CreateEventPage()),
+                        );
+                        // When we come back from the create page, reload events
+                        _loadEvents();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder<List<Map<String, dynamic>>>(
         future: _eventsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -118,6 +160,11 @@ class _ManageEventPageState extends State<ManageEventPage> {
             },
           );
         },
+      ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -113,26 +113,63 @@ class _PostAssignmentPageState extends State<PostAssignmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     // Check if form is valid
     final bool isFormValid = _titleController.text.isNotEmpty && _selectedFile != null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Color(0xFF2C3E50)),
-        title: const Text(
-          'Post Assignment',
-          style: TextStyle(
-            color: Color(0xFF2C3E50),
-            fontWeight: FontWeight.bold,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom AppBar
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Post Assignment',
+                        style: TextStyle(
+                          color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'serif',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- Title Field ---
@@ -248,6 +285,11 @@ class _PostAssignmentPageState extends State<PostAssignmentPage> {
               ),
             ),
           ],
+        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

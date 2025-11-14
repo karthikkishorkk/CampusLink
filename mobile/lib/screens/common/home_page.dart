@@ -117,9 +117,7 @@ class _HomePageState extends State<HomePage> {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final cardColor = Theme.of(context).cardColor;
     
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
+    return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -147,13 +145,13 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dashboard header - apply maroon color
+                // Dashboard header - maroon in light mode, creamy in dark mode
                 Text(
                   'Dashboard',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8B1538),
+                    color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
                     fontFamily: 'serif',
                   ),
                 ),
@@ -168,7 +166,8 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: textColor,
+                        color: isDark ? const Color(0xFFF5E6D3) : textColor,
+                        fontFamily: 'serif',
                       ),
                     ),
                     TextButton(
@@ -272,8 +271,7 @@ class _HomePageState extends State<HomePage> {
         ),
         ), // End of SafeArea
       ), // End of Container body
-    ), // End of Scaffold
-    ); // End of PopScope
+    ); // End of Scaffold
   }
 
   Widget _buildAlertCard(Map<String, dynamic> alert) {
@@ -349,6 +347,7 @@ class _HomePageState extends State<HomePage> {
   static const Color _kMaroon = Color(0xFF8B1538);
 
   Widget _buildSectionHeader(String title, IconData icon, Color color, {VoidCallback? onTap}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -363,8 +362,8 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  // Use consistent maroon for section titles
-                  color: _kMaroon,
+                  color: isDark ? const Color(0xFFF5E6D3) : _kMaroon,
+                  fontFamily: 'serif',
                 ),
               ),
             ],

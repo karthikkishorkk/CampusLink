@@ -6,25 +6,18 @@ class OpeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    // Always use light mode colors for opening screen
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    const Color(0xFF1A1A1A), // Dark variant
-                    const Color(0xFF2A2A2A),
-                    const Color(0xFF3A3A3A),
-                  ]
-                : [
-                    const Color(0xFFFFF9F0), // #FFF9F0
-                    const Color(0xFFF5E6D3), // #F5E6D3
-                    const Color(0xFFE8D5C4), // #E8D5C4
-                  ],
+            colors: [
+              Color(0xFFFFF9F0), // #FFF9F0
+              Color(0xFFF5E6D3), // #F5E6D3
+              Color(0xFFE8D5C4), // #E8D5C4
+            ],
           ),
         ),
         child: SafeArea(
@@ -35,9 +28,19 @@ class OpeningScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 1),
               Image.asset(
-                'assets/images/logobg.png',
-                width: MediaQuery.of(context).size.width * 0.95,
+                'assets/images/logowithout.png',
+                width: MediaQuery.of(context).size.width * 0.6,
                 fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'CampusLink',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8B1538),
+                  fontFamily: 'serif',
+                ),
               ),
               const Spacer(flex: 1),
               CustomButton(

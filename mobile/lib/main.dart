@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'routes/app_routes.dart';
@@ -35,6 +36,21 @@ class ClassroomApp extends StatelessWidget {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
+          // Set system UI overlay style globally
+          final isDark = themeProvider.themeMode == ThemeMode.dark ||
+              (themeProvider.themeMode == ThemeMode.system &&
+                  WidgetsBinding.instance.window.platformBrightness == Brightness.dark);
+          
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFE8D5C4),
+              systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+            ),
+          );
+          
           return MaterialApp(
             title: 'CampusLink',
             debugShowCheckedModeBanner: false,
@@ -45,6 +61,13 @@ class ClassroomApp extends StatelessWidget {
               fontFamily: 'serif',
               primarySwatch: Colors.blue,
               scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+              appBarTheme: const AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                ),
+              ),
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
@@ -52,6 +75,13 @@ class ClassroomApp extends StatelessWidget {
               primaryColor: const Color(0xFF7AB8F7),
               scaffoldBackgroundColor: const Color(0xFF121212),
               cardColor: const Color(0xFF1E1E1E),
+              appBarTheme: const AppBarTheme(
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
+                  statusBarBrightness: Brightness.dark,
+                ),
+              ),
             ),
             themeMode: themeProvider.themeMode,
             home: const AuthChecker(), // Check auth status on startup

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class ClassroomDetailsPage extends StatefulWidget {
   final String classroomName;
@@ -53,6 +55,9 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final isTeacher = userProvider.isTeacher;
+    
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
@@ -203,57 +208,58 @@ class _ClassroomDetailsPageState extends State<ClassroomDetailsPage> {
               ),
             ),
 
-            // Book Button
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: selectedTimeSlot != null
-                      ? () {
-                          // TODO: Implement booking logic
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Booking Confirmed'),
-                              content: Text(
-                                'Classroom: ${widget.classroomName}\n'
-                                'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}\n'
-                                'Time: $selectedTimeSlot',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('OK'),
+            // Book Button - Only show for teachers
+            if (isTeacher)
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: selectedTimeSlot != null
+                        ? () {
+                            // TODO: Implement booking logic
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Booking Confirmed'),
+                                content: Text(
+                                  'Classroom: ${widget.classroomName}\n'
+                                  'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}\n'
+                                  'Time: $selectedTimeSlot',
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7AB8F7),
-                    disabledBackgroundColor: Colors.grey.shade300,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7AB8F7),
+                      disabledBackgroundColor: Colors.grey.shade300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
                     ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    selectedTimeSlot != null ? 'Book Classroom' : 'Select Time Slot',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: selectedTimeSlot != null ? Colors.white : Colors.grey.shade500,
+                    child: Text(
+                      selectedTimeSlot != null ? 'Book Classroom' : 'Select Time Slot',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: selectedTimeSlot != null ? Colors.white : Colors.grey.shade500,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

@@ -76,18 +76,17 @@ class _AlertsPageState extends State<AlertsPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Use app-wide creamy gradient in light mode and dark variant in dark mode
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
+    return Scaffold(
       // keep AppBar but make it transparent and use colored title text
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Alerts & Circulars'),
         titleTextStyle: TextStyle(
-          color: Color(0xFF8B1538),
-          fontSize: 20,
+          color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
+          fontSize: 25,
           fontWeight: FontWeight.bold,
+          fontFamily: 'serif',
         ),
         automaticallyImplyLeading: false,
       ),
@@ -101,12 +100,13 @@ class _AlertsPageState extends State<AlertsPage> {
                 : [Color(0xFFFFF9F0), Color(0xFFF5E6D3), Color(0xFFE8D5C4)],
           ),
         ),
-        child: loading
-            ? const Center(child: CircularProgressIndicator(color: Color(0xFF7C183D)))
-            : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: alerts.length,
-              itemBuilder: (context, index) {
+        child: SafeArea(
+          child: loading
+              ? Center(child: CircularProgressIndicator(color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF7C183D)))
+              : ListView.builder(
+                padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 100),
+                itemCount: alerts.length,
+                itemBuilder: (context, index) {
                 final alert = alerts[index];
                 final filePath = alert['file_url'];
                 final createdAt = alert['created_at'] != null
@@ -126,10 +126,10 @@ class _AlertsPageState extends State<AlertsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(alert['title'] ?? "Untitled",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C183D),
+                              color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF7C183D),
                             )),
                         const SizedBox(height: 6),
                         Text(alert['description'] ?? "",
@@ -169,7 +169,7 @@ class _AlertsPageState extends State<AlertsPage> {
                             icon: const Icon(Icons.download),
                             label: const Text("Download Attachment"),
                             style: TextButton.styleFrom(
-                              foregroundColor: const Color(0xFF7C183D),
+                              foregroundColor: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF7C183D),
                             ),
                           ),
                       ],
@@ -178,8 +178,8 @@ class _AlertsPageState extends State<AlertsPage> {
                 );
               },
             ),
-      ),
-      ), // End of Scaffold
-    ); // End of PopScope
+        ), // End of SafeArea
+      ), // End of Container
+    ); // End of Scaffold
   }
 }

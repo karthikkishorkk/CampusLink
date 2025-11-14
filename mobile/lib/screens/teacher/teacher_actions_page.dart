@@ -20,9 +20,7 @@ class _TeacherActionsPageState extends State<TeacherActionsPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
+    return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -54,9 +52,10 @@ class _TeacherActionsPageState extends State<TeacherActionsPage> {
                   Text(
                     'Quick Actions',
                     style: TextStyle(
-                      color: Color(0xFF8B1538),
+                      color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'serif',
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -141,8 +140,7 @@ class _TeacherActionsPageState extends State<TeacherActionsPage> {
           ),
         ),
       ), // End of Container
-    ), // End of Scaffold
-    ); // End of PopScope
+    ); // End of Scaffold
   }
 
   // _buildActionCard helper function (No changes)

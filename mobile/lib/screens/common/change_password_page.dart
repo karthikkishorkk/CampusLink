@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
+import '../../services/supabase_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import for AuthApiException
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -16,6 +20,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
 
+  bool _isLoading = false; // 1. Add loading state
+
   @override
   void dispose() {
     _currentPasswordController.dispose();
@@ -24,45 +30,145 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.dispose();
   }
 
+  // 2. Add helper function for showing errors
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // 3. This is the new function to handle the logic
+  Future<void> _handlePasswordUpdate() async {
+    final currentPassword = _currentPasswordController.text;
+    final newPassword = _newPasswordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    // --- Validation ---
+    if (currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      _showError("Please fill all fields.");
+      return;
+    }
+    if (newPassword != confirmPassword) {
+      _showError("New passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      _showError("Password must be at least 6 characters long.");
+      return;
+    }
+    if (newPassword == currentPassword) {
+      _showError("New password must be different from the current one.");
+      return;
+    }
+
+    setState(() { _isLoading = true; });
+
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final email = userProvider.email; 
+
+      // --- Logic ---
+      // 1. Verify current password by trying to sign in
+      // This re-authenticates the user and proves they know their old password.
+      await SupabaseService.signIn(
+        email: email,
+        password: currentPassword,
+      );
+
+      // 2. If that succeeds, update to the new password
+      await SupabaseService.updateUserPassword(newPassword);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password updated successfully!'),
+            backgroundColor: Color(0xFF4CAF50),
+          ),
+        );
+        Navigator.pop(context);
+      }
+
+    } on AuthApiException catch (e) {
+      if (mounted) {
+        // This will catch "Invalid login credentials" if current password is wrong
+        _showError(e.message);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError("An unexpected error occurred: ${e.toString()}");
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with back button
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Change Password',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C3E50),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with back button
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-
-              // Current Password Field
-              const Text(
-                'Current Password',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Change Password',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'serif',
+                        color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 30),
+
+                // Current Password Field
+                Text(
+                  'Current Password',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
+                  ),
+                ),
               const SizedBox(height: 8),
               TextField(
                 controller: _currentPasswordController,
@@ -95,12 +201,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               const SizedBox(height: 20),
 
               // New Password Field
-              const Text(
+              Text(
                 'New Password',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
                 ),
               ),
               const SizedBox(height: 8),
@@ -135,12 +241,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               const SizedBox(height: 20),
 
               // Confirm New Password Field
-              const Text(
+              Text(
                 'Confirm New Password',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
                 ),
               ),
               const SizedBox(height: 8),
@@ -179,45 +285,33 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Validate and update password
-                    if (_newPasswordController.text == _confirmPasswordController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Password updated successfully!'),
-                          backgroundColor: Color(0xFF4CAF50),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Passwords do not match!'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  },
+                  // 4. Connect button to new logic and loading state
+                  onPressed: _isLoading ? null : _handlePasswordUpdate,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF7AB8F7),
+                    disabledBackgroundColor: Colors.grey.shade400,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Update Password',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  // 5. Show loading indicator
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Update Password',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

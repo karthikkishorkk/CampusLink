@@ -86,17 +86,60 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF2C3E50)),
-        title: const Text('Create Event', style: TextStyle(color: Color(0xFF2C3E50), fontWeight: FontWeight.bold)),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom AppBar
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Create Event',
+                        style: TextStyle(
+                          color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'serif',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Event Title', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -162,6 +205,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
             ),
           ],
+        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

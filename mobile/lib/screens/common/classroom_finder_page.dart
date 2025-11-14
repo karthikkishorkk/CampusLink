@@ -132,9 +132,7 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final cardColor = Theme.of(context).cardColor;
     
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
+    return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -166,7 +164,7 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF8B1538),
+                      color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
                       fontFamily: 'serif',
                     ),
                   ),
@@ -481,8 +479,7 @@ class _ClassroomFinderPageState extends State<ClassroomFinderPage> {
         ),
         ), // End of SafeArea
       ), // End of Container
-    ), // End of Scaffold
-    ); // End of PopScope
+    ); // End of Scaffold
   }
 
   Widget _buildClassroomCard({required String classroomName, required VoidCallback onTap}) {

@@ -52,9 +52,7 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
     
     // Use the same cream/dark gradient background as other pages and
     // make the AppBar transparent; title text will be maroon to match dashboard.
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
+    return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -82,9 +80,10 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
               title: Text(
                 'Assignments',
                 style: TextStyle(
-                  color: const Color(0xFF8B1538),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'serif',
                 ),
               ),
             ),
@@ -166,7 +165,6 @@ class _StudentAssignmentsPageState extends State<StudentAssignmentsPage> {
           ], // end Column children
         ), // end Column
       ), // end Container
-      ), // End of Scaffold
-    ); // End of PopScope
+    ); // End of Scaffold
   } // end build
 } // end class

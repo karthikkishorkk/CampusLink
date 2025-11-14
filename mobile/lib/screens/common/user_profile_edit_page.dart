@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class UserProfileEditPage extends StatefulWidget {
   const UserProfileEditPage({Key? key}) : super(key: key);
@@ -8,9 +10,27 @@ class UserProfileEditPage extends StatefulWidget {
 }
 
 class _UserProfileEditPageState extends State<UserProfileEditPage> {
-  final TextEditingController _firstNameController = TextEditingController(text: 'John');
-  final TextEditingController _lastNameController = TextEditingController(text: 'Doe');
-  final String rollNo = 'CS2023001'; // Cannot be changed
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  String rollNoOrTid = ''; // Will be loaded from provider
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load data from the provider when the page opens
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    
+    // Split the full name into first and last
+    final fullName = userProvider.name;
+    final nameParts = fullName.split(' ');
+    
+    _firstNameController.text = nameParts.first;
+    _lastNameController.text = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+    
+    // Get the correct ID (roll_no for student, tid for teacher)
+    rollNoOrTid = userProvider.rollNumber;
+  }
 
   @override
   void dispose() {
@@ -19,30 +39,91 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
     super.dispose();
   }
 
+  // Function to handle saving the profile
+  Future<void> _saveProfile() async {
+    if (_firstNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('First name cannot be empty'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    setState(() { _isLoading = true; });
+    
+    // Combine first and last name
+    final String newFullName = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim();
+
+    try {
+      // Call the provider's update function
+      await Provider.of<UserProvider>(context, listen: false)
+          .updateProfile(name: newFullName);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final userType = Provider.of<UserProvider>(context, listen: false).role;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    const Color(0xFF1A1A1A),
+                    const Color(0xFF2A2A2A),
+                    const Color(0xFF3A3A3A),
+                  ]
+                : [
+                    const Color(0xFFFFF9F0),
+                    const Color(0xFFF5E6D3),
+                    const Color(0xFFE8D5C4),
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with back button
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Color(0xFF2C3E50)),
+                    icon: Icon(Icons.arrow_back, color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538)),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'User Profile',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2C3E50),
+                      fontFamily: 'serif',
+                      color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF8B1538),
                     ),
                   ),
                 ],
@@ -50,12 +131,12 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
               const SizedBox(height: 30),
 
               // First Name Field
-              const Text(
+              Text(
                 'First Name',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
                 ),
               ),
               const SizedBox(height: 8),
@@ -78,12 +159,12 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
               const SizedBox(height: 20),
 
               // Last Name Field
-              const Text(
+              Text(
                 'Last Name',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
                 ),
               ),
               const SizedBox(height: 8),
@@ -105,17 +186,18 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
               ),
               const SizedBox(height: 20),
 
-              // Roll Number (Read-only)
-              const Text(
-                'Roll Number',
+              // Roll Number (Read-only) - DYNAMIC
+              Text(
+                userType == 'student' ? 'Roll Number' : 'Teacher ID',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2C3E50),
+                  color: isDark ? const Color(0xFFF5E6D3) : const Color(0xFF2C3E50),
                 ),
               ),
               const SizedBox(height: 8),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
@@ -124,7 +206,7 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
                 child: Row(
                   children: [
                     Text(
-                      rollNo,
+                      rollNoOrTid,
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -142,30 +224,31 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Save profile changes
-                    Navigator.pop(context);
-                  },
+                  onPressed: _isLoading ? null : _saveProfile,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF7AB8F7),
+                    disabledBackgroundColor: Colors.grey.shade400,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Save Changes',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }
