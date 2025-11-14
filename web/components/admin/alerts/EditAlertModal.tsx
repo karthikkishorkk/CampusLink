@@ -39,11 +39,7 @@ export default function EditAlertModal({
 
         if (uploadError) throw uploadError;
 
-        const { data: publicUrl } = supabase.storage
-          .from("alerts-files")
-          .getPublicUrl(filePath);
-
-        fileUrl = publicUrl.publicUrl;
+        fileUrl = filePath;
       }
 
       const { error } = await supabase
