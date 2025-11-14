@@ -91,7 +91,7 @@ export default function DocumentsPage() {
                   </td>
                   <td className="py-3 px-4 flex items-center gap-4 text-sm">
                     <a
-                      href={doc.file_url}
+                      href={`https://ehwcukgswuhjdcgjnruv.supabase.co/storage/v1/object/public/alerts-files/${doc.file_url}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-blue-600 hover:underline font-medium"
