@@ -4,9 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'routes/app_routes.dart';
 import 'providers/user_provider.dart';
-import 'providers/notification_provider.dart';
-import 'providers/classroom_provider.dart';
-import 'providers/event_provider.dart';
 import 'providers/theme_provider.dart';
 import 'config/supabase_config.dart';
 
@@ -29,9 +26,6 @@ class ClassroomApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => ClassroomProvider()),
-        ChangeNotifierProvider(create: (_) => EventProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Consumer<ThemeProvider>(
