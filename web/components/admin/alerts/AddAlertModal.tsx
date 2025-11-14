@@ -22,58 +22,57 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // ✅ Fetch admin ID based on logged-in email
+  // Fetch admin ID based on logged-in email
   useEffect(() => {
     const fetchAdmin = async () => {
       if (!session?.user?.email) return;
+
       const { data, error } = await supabaseBrowser
         .from("admins")
         .select("id")
         .eq("email", session.user.email)
         .single();
+
       if (data && !error) setAdminId(data.id);
     };
+
     fetchAdmin();
   }, [session]);
 
-  // ✅ Handle file + alert upload
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!adminId) {
-      alert("Admin record not found! Please ensure your email is in the admins table.");
+      alert("Admin record not found! Add your email in the admins table.");
       return;
     }
 
     setUploading(true);
-    let fileUrl: string | null = null;
+
+    let relativePath: string | null = null; // store only "alerts/filename.ext"
 
     try {
-      // Upload file to Supabase Storage if selected
+      // Upload file if selected
       if (file) {
         const fileExt = file.name.split(".").pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const fileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2)}.${fileExt}`;
         const filePath = `alerts/${fileName}`;
 
-        const { error: uploadError } = await supabaseBrowser.storage
-          .from("alerts-files")
-          .upload(filePath, file, {
-            cacheControl: "3600",
+        const { data: uploadData, error: uploadError } =
+          await supabaseBrowser.storage.from("alerts-files").upload(filePath, file, {
             upsert: true,
+            cacheControl: "3600",
             contentType: file.type || "application/pdf",
           });
 
         if (uploadError) throw uploadError;
 
-        // Get public URL
-        const { data: publicUrl } = supabaseBrowser.storage
-          .from("alerts-files")
-          .getPublicUrl(filePath);
-
-        fileUrl = publicUrl.publicUrl;
+        // Save ONLY the relative path → "alerts/filename.ext"
+        relativePath = uploadData?.path ?? filePath;
       }
 
-      // Insert into alerts table
       const { error } = await supabaseBrowser.from("alerts").insert([
         {
           title,
@@ -81,7 +80,7 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
           type,
           start_date: type === "Event" ? startDate : null,
           end_date: type === "Event" ? endDate : null,
-          file_url: fileUrl,
+          file_url: relativePath, // ONLY the relative path!!
           posted_by: adminId,
         },
       ]);
@@ -93,7 +92,7 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
       onClose();
     } catch (err: any) {
       console.error("Upload error:", err);
-      alert(`Error: ${err.message || "Failed to upload alert."}`);
+      alert(`Error: ${err.message ?? "Failed to upload alert."}`);
       setUploading(false);
     }
   };
@@ -113,7 +112,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Title */}
           <input
             type="text"
             placeholder="Title"
@@ -123,7 +121,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
             required
           />
 
-          {/* Description */}
           <textarea
             placeholder="Description"
             value={description}
@@ -132,7 +129,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
             required
           />
 
-          {/* Type selector */}
           <div className="flex gap-2 items-center">
             <label className="font-medium text-sm">Type:</label>
             <select
@@ -146,7 +142,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
             </select>
           </div>
 
-          {/* Event dates */}
           {type === "Event" && (
             <div className="flex gap-3">
               <input
@@ -166,7 +161,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
             </div>
           )}
 
-          {/* File input */}
           <div className="flex items-center gap-2">
             <Upload className="w-4 h-4 text-[#8B1538]" />
             <input
@@ -181,7 +175,6 @@ export default function AddAlertModal({ onClose, refresh }: AddAlertModalProps) 
             )}
           </div>
 
-          {/* Submit button */}
           <button
             type="submit"
             disabled={uploading}

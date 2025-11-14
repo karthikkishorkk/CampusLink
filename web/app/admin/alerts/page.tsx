@@ -96,7 +96,7 @@ export default function AlertsPage() {
 
                   {alert.file_url && (
                     <a
-                      href={alert.file_url}
+                      href={`https://ehwcukgswuhjdcgjnruv.supabase.co/storage/v1/object/public/alerts-files/${alert.file_url}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-[#8B1538] hover:underline mt-2 text-sm"
