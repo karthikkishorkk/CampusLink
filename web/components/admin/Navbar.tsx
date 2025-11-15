@@ -38,13 +38,13 @@ export default function Navbar({ onMenuClick }: { onMenuClick: () => void }) {
           })}
         </p>
         {/* Dark Mode Toggle */}
-        <button
+        {/* <button
           onClick={() => setDarkMode(!darkMode)}
           className="p-2 hover:bg-[#F5E6D3]/50 rounded-lg transition-colors text-[#8B1538]"
           title="Toggle dark mode"
         >
           {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </button>
+        </button> */}
 
         {/* Logout */}
         <button

@@ -8,8 +8,6 @@ export default function BookingRequestsPage() {
   const supabase = supabaseBrowser;
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<any | null>(null);
-  const [comment, setComment] = useState("");
 
   // Fetch all bookings
   const fetchBookings = async () => {
@@ -46,13 +44,14 @@ export default function BookingRequestsPage() {
     }
   };
 
-  // Reject booking
+  // Reject booking (INSTANT — NO MODAL)
   const handleReject = async (id: string) => {
     try {
       const { error } = await supabase
         .from("bookings")
         .update({ status: "Rejected" })
         .eq("id", id);
+
       if (error) throw error;
 
       alert("❌ Booking rejected!");
@@ -117,15 +116,13 @@ export default function BookingRequestsPage() {
                     {booking.status === "Pending" && (
                       <>
                         <button
-                          onClick={() =>
-                            handleApprove(booking.id, booking.room)
-                          }
+                          onClick={() => handleApprove(booking.id, booking.room)}
                           className="flex items-center gap-1 text-green-700 hover:underline font-medium"
                         >
                           <CheckCircle className="w-4 h-4" /> Approve
                         </button>
                         <button
-                          onClick={() => setSelected(booking)}
+                          onClick={() => handleReject(booking.id)}
                           className="flex items-center gap-1 text-red-700 hover:underline font-medium"
                         >
                           <XCircle className="w-4 h-4" /> Reject
@@ -137,38 +134,6 @@ export default function BookingRequestsPage() {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {/* Optional Comment Modal (for rejections / notes) */}
-      {selected && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
-            <h2 className="text-xl font-bold text-[#8B1538] mb-3">
-              Add Comment for {selected.room}
-            </h2>
-            <textarea
-              className="w-full border rounded-lg p-2 mb-3"
-              rows={3}
-              placeholder="Enter comment (optional)..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setSelected(null)}
-                className="bg-gray-200 px-3 py-2 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleReject(selected.id)}
-                className="bg-red-600 text-white px-3 py-2 rounded-lg"
-              >
-                Reject
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
