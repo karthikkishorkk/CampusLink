@@ -141,7 +141,7 @@ export default function AdminDashboard() {
   const quickActions = [
     { title: "Create Alert", icon: Bell, color: "bg-gradient-to-br from-[#8B1538] to-[#A01842]", path: "/admin/alerts" },
     { title: "Add User", icon: Users, color: "bg-gradient-to-br from-[#D4AF37] to-[#B8941F]", path: "/admin/users" },
-    { title: "Manage Requests", icon: ClipboardList, color: "bg-gradient-to-br from-amber-500 to-amber-600", path: "/admin/classrooms" },
+    { title: "Manage Requests", icon: ClipboardList, color: "bg-gradient-to-br from-amber-500 to-amber-600", path: "/admin/bookings" },
     { title: "Manage Rooms", icon: School, color: "bg-gradient-to-br from-emerald-500 to-emerald-600", path: "/admin/classrooms" },
   ];
 
